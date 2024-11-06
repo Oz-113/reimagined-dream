@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .room {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin: 0 0 10px;
+        }
+        .status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Akıllı Ev İzleme Sistemi</h1>
+    <div class="room" id="room1">
+        <h2>Oda 1</h2>
+        <div class="status">
+            Sıcaklık: <span id="temperature1">--</span> °C
+        </div>
+        <div class="status">
+            Kapı Durumu: <span id="door1">Kapalı</span>
+        </div>
+    </div>
+    <div class="room" id="room2">
+        <h2>Oda 2</h2>
+        <div class="status">
+            Sıcaklık: <span id="temperature2">--</span> °C
+        </div>
+        <div class="status">
+            Kapı Durumu: <span id="door2">Kapalı</span>
+        </div>
+    </div>
+    <script>
+        const socket = new WebSocket('ws://raspberrypi4.local:8080');
+
+        socket.addEventListener('message', function (event) {
+            const data = event.data.split(';');
+            const espId = data[0];
+            const distance = data[1];
+            const temperature = data[2];
+
+            // Gelen veriyi HTML'e güncelle
+            if (espId === 'ESP1') {
+                document.getElementById('temperature1').innerText = temperature;
+                document.getElementById('door1').innerText = distance; // Mesafe 100'den azsa kapı açık
+            } else if (espId === 'ESP2') {
+                document.getElementById('temperature2').innerText = temperature;
+                document.getElementById('door2').innerText = distance; // Mesafe 100'den azsa kapı açık
+            }
+        });
+    </script>
+</body>
+</html>
