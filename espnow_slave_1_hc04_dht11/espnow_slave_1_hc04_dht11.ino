@@ -38,10 +38,14 @@ typedef struct struct_message {
   int dist;
   int espid = 001;
 } struct_message;
+typedef struct reqinc{
+bool req = 0;
+
+}reqinc;
 
 // Create a structured object
 struct_message gonder;
-struct_message incoming;
+reqinc incoming;
 DHT dht(DHTPIN, DHTTYPE);
 // Peer info
 esp_now_peer_info_t peerInfo;
@@ -54,12 +58,11 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming, incomingData, sizeof(incoming));
   
-  Serial.print(incoming.b);
-  myservo.write(incoming.b);
+  Serial.print(incoming.req);
+
   }
 void setup() {
-  	myservo.setPeriodHertz(50);    // standard 50 hz servo
-	myservo.attach(17, 500, 3000);
+  
   dht.begin();
     pinMode(trigPin, OUTPUT); 
   pinMode(echoPin, INPUT);
@@ -120,7 +123,10 @@ hareket = 1;
   
   Serial.println(int_value);
   // Send message via ESP-NOW
+  if(incoming.req == 1){
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &gonder, sizeof(gonder));
+incoming.req = 0;
+  
    
   if (result == ESP_OK) {
     Serial.println("Sending confirmed");
@@ -128,7 +134,7 @@ hareket = 1;
   else {
     Serial.println("Sending error");
   }
-  delay(1000);
+}
 }
 void mesafeal(){
  digitalWrite(trigPin, LOW);

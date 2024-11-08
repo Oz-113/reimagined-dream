@@ -30,10 +30,13 @@ typedef struct struct_message {
   int dist;
   int espid = 002;
 } struct_message;
+typedef struct req{
+bool req = 0;
 
+}req;
 // Create a structured object
 struct_message gonder;
-struct_message incoming;
+req incoming;
 // Peer info
 esp_now_peer_info_t peerInfo;
 
@@ -45,7 +48,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming, incomingData, sizeof(incoming));
   
-  Serial.print(incoming.a);
+  Serial.print(incoming.req);
   }
 
 void setup() {
@@ -102,7 +105,10 @@ void loop() {
   gonder.dist = random(100,200);
   Serial.println(int_value);
   // Send message via ESP-NOW
+ if(incoming.req == 1){
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &gonder, sizeof(gonder));
+incoming.req = 0;
+  
    
   if (result == ESP_OK) {
     Serial.println("Sending confirmed");
@@ -110,5 +116,5 @@ void loop() {
   else {
     Serial.println("Sending error");
   }
-  delay(1000);
+}
 }

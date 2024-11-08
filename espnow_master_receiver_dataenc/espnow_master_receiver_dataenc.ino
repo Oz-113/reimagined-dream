@@ -10,7 +10,7 @@
 // Include Libraries
 #include <esp_now.h>
 #include <WiFi.h>
-
+TaskHandle_t task_loop1;
 esp_now_peer_info_t peerInfo;
 // Define a data structure
 typedef struct struct_message {
@@ -21,14 +21,17 @@ typedef struct struct_message {
   int dist;
   int espid;
 } struct_message;
+typedef struct req {bool req;}req;
 
 int last_sent_id;
 int hedef_id;
 int pos = 0;
-  int req_data = 0;
+ bool req_ser = 0;
+  long tim = 0;
 // Create a structured object
 struct_message incoming;
- struct_message gonderilecek;
+
+ req request;
 String uzaklik = "";
 
 
@@ -40,6 +43,8 @@ uint8_t addr_lilygo_nopin[] = { 0x2c,0xbc,0xbb,0xb7,0x54,0x10};
 void serialencode(){
 
 
+  Serial2.print(incoming.espid);
+  Serial2.print("?");
   Serial2.print(incoming.a);
   Serial2.print("&");
     Serial2.print(incoming.dist);
@@ -50,8 +55,6 @@ Serial2.print("$");
   Serial2.print("$");
    Serial2.print(incoming.c);
   Serial2.print("!");
-  Serial2.print(incoming.espid);
-  Serial2.print("?");
   Serial2.print("#");
   last_sent_id = incoming.espid;
 }
@@ -81,7 +84,7 @@ switch (incoming.espid){
   Serial.print("distance: ");
   Serial.println(incoming.dist);
   Serial.println();
-if(req_data == 1 && last_sent_id != 001){serialencode();req_data = 0;}
+if(req_ser == 1 && last_sent_id != 001){serialencode();req_ser = 0;}
 
   break;
   case 002:
@@ -98,7 +101,7 @@ if(req_data == 1 && last_sent_id != 001){serialencode();req_data = 0;}
   Serial.print("int 100-200: ");
   Serial.println(incoming.dist);
   Serial.println();
- if(req_data == 1 && last_sent_id != 002){serialencode();req_data = 0;}
+ if(req_ser == 1 && last_sent_id != 002){serialencode();req_ser = 0;}
 break;
 }
 
@@ -107,7 +110,16 @@ break;
 
 void setup() {
    
- 
+ xTaskCreatePinnedToCore(                            //arduinonun çalışmadığı core'a sabit fonksiyon(int main ama yan sanayi gibi bişey) :91
+    mainamaikinci,              
+    "log display handler",                
+    10000,                
+    NULL,                 
+    tskIDLE_PRIORITY,                    
+    &task_loop1,            
+    !ARDUINO_RUNNING_CORE); 
+
+
 
 
 
@@ -148,37 +160,31 @@ void setup() {
 void loop() {
   if(Serial2.available()){
 if(Serial2.read() == '.'){
-  req_data = 1;
+ req_ser = 1;
+  request.req = 1;
 }
 
   }
-pos+=10;
-if(pos>180){pos=0;}
-
-gonderilecek.b = pos;
-esp_err_t result = esp_now_send(addr_lilygo_pin, (uint8_t *) &gonderilecek, sizeof(gonderilecek));
 
 
 
 
+ }
+ void mainamaikinci(void * parameter){
+  vTaskDelay(4000);
+for(;;){
 
-strcpy(gonderilecek.a, "Hi lilygo no2, from master");
-esp_err_t result2 = esp_now_send(addr_lilygo_nopin, (uint8_t *) &gonderilecek, sizeof(gonderilecek));
-
-
-
- if (result == ESP_OK) {
-    Serial.println("Sending 1 confirmed");
+if(request.req == 1){
+  
+ esp_err_t result_req001 = esp_now_send(addr_lilygo_pin, (uint8_t *) &request, sizeof(request));
+  esp_err_t result_req002 = esp_now_send(addr_lilygo_nopin, (uint8_t *) &request, sizeof(request));
+  request.req = 0;
   }
-  else {
-    Serial.println("Sending 1 error");
-  }
- 
- if (result2 == ESP_OK) {
-    Serial.println("Sending 2 confirmed");
-  }
-  else {
-    Serial.println("Sending 2 error");
-  }
-  delay(1000);
+if(millis()>tim +1000){
+
+  tim=millis();
+ }
+
 }
+ }
+
