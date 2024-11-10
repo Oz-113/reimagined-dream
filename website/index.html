@@ -7,16 +7,20 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #000000;
             margin: 0;
             padding: 20px;
+            color: #fff
         }
         .room {
-            background: white;
+            background: rgb(41, 41, 41);
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 20px;
             margin-bottom: 20px;
+            color: #fff;
+            font-size:23px;
+
         }
         h2 {
             margin: 0 0 10px;
@@ -27,23 +31,50 @@
     </style>
 </head>
 <body>
-    <h1>Akıllı Ev İzleme Sistemi</h1>
+    <h1>gelen veri</h1>
     <div class="room" id="room1">
-        <h2>Oda 1</h2>
+        <h2>lilygo-t-display</h2>
         <div class="status">
-            Sıcaklık: <span id="temperature1">--</span> °C
+            temp <span id="temperature1">--</span> °C
         </div>
         <div class="status">
-            Kapı Durumu: <span id="door1">Kapalı</span>
+            potantiometer <span id="door1">Kapalı</span>
         </div>
     </div>
     <div class="room" id="room2">
-        <h2>Oda 2</h2>
+        <h2>esp32-1</h2>
         <div class="status">
-            Sıcaklık: <span id="temperature2">--</span> °C
+            float <span id="temperature2">--</span> °C
         </div>
         <div class="status">
-            Kapı Durumu: <span id="door2">Kapalı</span>
+            int 1-10: <span id="door2">Kapalı</span>
+        </div>
+    </div>
+    <div class="room" id="room3">
+        <h2>esp32-2</h2>
+        <div class="status">
+            float <span id="temperature3">--</span> °C
+        </div>
+        <div class="status">
+            int 11-20: <span id="door3">Kapalı</span>
+        </div>
+    </div>
+    <div class="room" id="room4">
+        <h2>esp32-3</h2>
+        <div class="status">
+            float <span id="temperature4">--</span> °C
+        </div>
+        <div class="status">
+            int 21-30: <span id="door4">Kapalı</span>
+        </div>
+    </div>
+    <div class="room" id="room5">
+        <h2>esp32-4</h2>
+        <div class="status">
+            float <span id="temperature5">--</span> °C
+        </div>
+        <div class="status">
+            int 31-40: <span id="door5">Kapalı</span>
         </div>
     </div>
     <script>
@@ -62,6 +93,15 @@
             } else if (espId === 'ESP2') {
                 document.getElementById('temperature2').innerText = temperature;
                 document.getElementById('door2').innerText = distance; // Mesafe 100'den azsa kapı açık
+            } else if (espId === 'ESP3') {
+                document.getElementById('temperature3').innerText = temperature;
+                document.getElementById('door3').innerText = distance; // Mesafe 100'den azsa kapı açık
+            }else if (espId === 'ESP4') {
+                document.getElementById('temperature4').innerText = temperature;
+                document.getElementById('door4').innerText = distance; // Mesafe 100'den azsa kapı açık
+            } else if (espId === 'ESP5') {
+                document.getElementById('temperature5').innerText = temperature;
+                document.getElementById('door5').innerText = distance; // Mesafe 100'den azsa kapı açık
             }
         });
     </script>
