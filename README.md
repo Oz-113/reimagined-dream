@@ -1,10 +1,11 @@
 # reimagined-dream
 smart_home_prototype
-a mixture made of esp32's and a raspberry pi. utilizes:
-*esp now
-*uart
-*web sockets
-*sqlite3 database
+a mixture made of esp32's and a raspberry pi. 
+utilizes:
+* esp now
+* uart
+* web sockets
+* sqlite3 database
 
 # required:
 "*" = current and not exact
