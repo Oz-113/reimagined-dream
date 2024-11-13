@@ -1,24 +1,15 @@
-/*
-  ESP-NOW Demo - Receive
-  esp-now-demo-rcv.ino
-  Reads data from Initiator
-  
-  DroneBot Workshop 2022
-  https://dronebotworkshop.com
-*/
 
-// Include Libraries
 #include <esp_now.h>
 #include <WiFi.h>
 TaskHandle_t task_loop1;
 esp_now_peer_info_t peerInfo;
-// Define a data structure
+
 typedef struct struct_message {
-  char a[32];
-  int b;
-  float c;
-  bool d;
-  int dist;
+
+  float temp;
+  bool kapi;
+  bool parlaklik;
+  bool pir;
   int espid;
 } struct_message;
 typedef struct req {bool req;}req;
@@ -59,19 +50,19 @@ if(last_sent_id==incoming.espid){
 
   Serial2.print(incoming.espid);
   Serial2.print("?");
-  Serial2.print(incoming.a);
-  Serial2.print("&");
-    Serial2.print(incoming.dist);
+  // Serial2.print(incoming.a);
+  // Serial2.print("&");
+    Serial2.print(incoming.kapi);
     Serial2.print("$");
-  Serial2.print(incoming.b);
+  Serial2.print(incoming.pir);
 Serial2.print("$");
-  Serial2.print(incoming.d);
+  Serial2.print(incoming.parlaklik);
   Serial2.print("$");
-   Serial2.print(incoming.c);
+   Serial2.print(incoming.temp);
   Serial2.print("!");
   Serial2.print("#");
   Serial.println("serial sent!");
-  last_sent_id = incoming.espid;
+  // last_sent_id = incoming.espid;
   }
 }
 
