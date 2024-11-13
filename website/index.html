@@ -104,6 +104,12 @@
                 document.getElementById('door5').innerText = distance; // Mesafe 100'den azsa kapı açık
             }
         });
+	socket.onopen = function() {
+            console.log('WebSocket bağlantısı açıldı');
+        };
+	socket.onclose = function (event){
+location.reload();
+	};
     </script>
 </body>
 </html>
