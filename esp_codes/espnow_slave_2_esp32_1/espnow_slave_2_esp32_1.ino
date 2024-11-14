@@ -14,11 +14,11 @@
 DHT dht(DHTPIN, DHTTYPE);
 
 long duration;
-// MAC Address of responder - edit as required
- //uint8_t broadcastAddress[] = { 0x34,0x98,0x7A,0xA6,0x6C,0x44}; //lilygo mac
+
+ //uint8_t broadcastAddress[] = { 0x34,0x98,0x7A,0xA6,0x6C,0x44}; //lilygo t display mac
 uint8_t broadcastAddress[] = { 0xAC,0x15,0x18,0xE5,0x04,0xDC}; //esp32 mac
 
-// Define a data structure
+
 typedef struct struct_message {
  
   float temp;
@@ -31,16 +31,17 @@ typedef struct req{
 bool req = 0;
 
 }req;
-// Create a structured object
+
 struct_message gonder;
 req incoming;
-// Peer info
+
 esp_now_peer_info_t peerInfo;
 
-// Callback function called when data is sent
+
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  logprint(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming, incomingData, sizeof(incoming));
