@@ -2,7 +2,7 @@
 
 #include <DHT.h>
 #include <DHT_U.h>
-#define DHTPIN 15
+#define DHTPIN 15 // 25 ile degistir
 #define DHTTYPE DHT11
 #define IRPIN 26
 #define LDRPIN 27
