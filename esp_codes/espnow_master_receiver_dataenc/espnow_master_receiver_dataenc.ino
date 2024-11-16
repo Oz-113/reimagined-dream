@@ -14,13 +14,15 @@ typedef struct struct_message {
 } struct_message;
 typedef struct req {bool req;}req;
 
+bool espler[5];
+
 int last_sent_id;
 int hedef_id;
 int pos = 0;
  bool req_ser = 0;
   long tim = 0;
   
-// Create a structured object
+
 struct_message incoming;
 
  req request;
@@ -42,7 +44,7 @@ uint8_t * macler[] = {
   addr_esp32_4
   };
 
-// Callback function executed when data is received
+
 void serialencode(){
 if(last_sent_id==incoming.espid){
   return;
@@ -50,8 +52,11 @@ if(last_sent_id==incoming.espid){
 
   Serial2.print(incoming.espid);
   Serial2.print("?");
-  // Serial2.print(incoming.a);
-  // Serial2.print("&");
+ for(int i=0;i<5;i++){
+
+ Serial2.print(espler[i]);
+}
+  Serial2.print("&");
     Serial2.print(incoming.kapi);
     Serial2.print("$");
   Serial2.print(incoming.pir);
@@ -71,8 +76,26 @@ Serial2.print("$");
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+switch(mac_addr[3]){
+  case 166:
+espler[0] = (status == ESP_NOW_SEND_SUCCESS);
+  break;
+case 178:
+espler[1] = (status == ESP_NOW_SEND_SUCCESS);
+break;
+case 164:
+espler[2] = (status == ESP_NOW_SEND_SUCCESS);
+break;
 
- 
+case 31:
+espler[3] = (status == ESP_NOW_SEND_SUCCESS);
+break;
+case 36:
+espler[4] = (status == ESP_NOW_SEND_SUCCESS);
+break;
+
+
+}
 
 }
 
@@ -80,6 +103,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&incoming, incomingData, sizeof(incoming));
  
+
 serialencode();
 
 }
@@ -102,21 +126,21 @@ void setup() {
 
 
 
-  // Set up Serial Monitor
+ 
   pinMode(18,OUTPUT);
   Serial.begin(115200);
   Serial2.begin(115200,SERIAL_8N1,17,16);
   
-  // Set ESP32 as a Wi-Fi Station
+
   WiFi.mode(WIFI_STA);
 
-  // Initilize ESP-NOW
+ 
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
 
-  // Register peer
+ 
   peerInfo.channel = 0;  
   peerInfo.encrypt = false; 
   for(int i=0;i<5;i++){
@@ -128,7 +152,7 @@ void setup() {
   }
   
   
-  // Register callback function
+ 
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
     esp_now_register_send_cb(OnDataSent);
 
@@ -168,4 +192,3 @@ if(millis()>tim +1000){
 
 }
  }
-
