@@ -16,4 +16,4 @@ utilizes:
 * infrared proximity sensor 4
 * raspberrypi (4 or 5) x 1 
  
-10.11.2024
+15.11.2024
