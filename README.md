@@ -8,12 +8,12 @@ utilizes:
 * sqlite3 database
 
 # required:
-"*" = current and not exact
-* esp32 slave x 5 
+
+* esp32 slave x 4 
 * esp32 master x 1
-* dht11 x 1 *
-* potentiometer x 1 *
-* hc-04 x 1 *
+* dht11 x 4 
+* pir sensor x 4
+* infrared proximity sensor 4
 * raspberrypi (4 or 5) x 1 
  
 10.11.2024
