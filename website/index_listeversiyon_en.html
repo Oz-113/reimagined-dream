@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            margin: 0;
+            padding: 20px;
+            color: #fff
+            
+        }
+        h1{
+
+            color:red;
+        
+
+        }
+        .container {
+            display: flex;
+            justify-content: center; /* Ortalar */
+            gap: 10px; /* Divler arası boşluk */
+        }
+        .room {
+           width: 25%;
+            background: rgb(41, 41, 41);
+            border: 1px solid #fffb00;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 5px;
+         
+            color: #fff;
+            font-size:23px;
+
+        }
+        h2 {
+            margin: 0 0 10px;
+        }
+        .status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="message">NO WEBSOCKET SERVER</h1>
+   <div class="container">
+    <div class="room" id="room2">
+        <h2>Room 2</h2>
+        <span>esp32-1</span>
+        <div class="status">
+            temperature <span id="temperature2">--</span> °C
+        </div>
+        <div class="status">
+            door1: <span id="door2">Kapalı</span>
+        </div>
+        <div class="status">
+        Movement1: <span id="pir2"></span>
+
+        </div>
+        <div class="status">
+            Brightness: <span id="parlaklik2">
+
+        </div>
+    </div>
+    <div class="room" id="room3">
+        <h2>Room 3</h2>
+        <span>esp32-2</span>
+        <div class="status">
+            temperature: <span id="temperature3">--</span> °C
+        </div>
+        <div class="status">
+            door2: <span id="door3">Kapalı</span>
+        </div>
+        <div class="status">
+            Movement1: <span id="pir3"></span>
+    
+            </div>
+            <div class="status">
+                Brightness: <span id="parlaklik3">
+    
+            </div>
+    </div>
+    <div class="room" id="room4">
+        <h2>Room 4</h2>
+        <span>esp32-3</span>
+        <div class="status">
+            Temperature: <span id="temperature4">--</span> °C
+        </div>
+        <div class="status">
+            Door3: <span id="door4">Kapalı</span>
+        </div>
+        <div class="status">
+            Movement1: <span id="pir4"></span>
+    
+            </div>
+            <div class="status">
+                Brightness: <span id="parlaklik4">
+    
+            </div>
+    </div>
+   
+    <div class="room" id="room5">
+        <h2>Room 5:</h2>
+        <span>esp32-4</span>
+        <div class="status">
+            Temperatur <span id="temperature5">--</span> °C
+        </div>
+        <div class="status">
+            Door4 <span id="door5">Kapalı</span>
+        </div>
+        <div class="status">
+            Movement1: <span id="pir5"></span>
+    
+            </div>
+            <div class="status">
+                Brightness: <span id="parlaklik5">
+    
+            </div>
+    </div> 
+</div>
+    <script>
+        const socket = new WebSocket('ws://raspberrypi4.local:8080');
+        let biji= 0;
+
+        socket.addEventListener('message', function (event) {
+            const data = event.data.split(';');
+            const espId = data[0];
+            const pir = data[1];
+            const distance = data[2];
+            const parlaklik = data[3];
+            const temperature = data[4];
+            let kapi = "red";
+            let durum = "geöffnet";
+            let hareket = "red";
+            let hareket_durum = "calm";
+            let par = "red";
+            let par_durum = "dunkel"
+           switch(distance){
+            case '1':
+                kapi = "#fc1100";
+                durum = "closed";
+                break;
+            case '0':
+                kapi = "#72fc00";
+                durum = "open";
+                break;
+           }
+           switch(pir){
+            case '1':
+                hareket = "#fc1100";
+                hareket_durum = "Movement!";
+                break;
+            case '0':
+                hareket = "#72fc00";
+                hareket_durum = "calm";
+                break;
+           }
+           switch(parlaklik){
+            case '1':
+                par = "#fff";
+                par_durum = "bright";
+                break;
+            case '0':
+                par = "#787878";
+                par_durum = "dark";
+                break;
+           }
+            if (espId === 'ESP1') {
+                document.getElementById('temperature1').innerText = temperature;
+                document.getElementById('door1').innerText = durum; 
+                document.getElementById('door1').style.color =  kapi;  
+            
+                document.getElementById('pir1').innerText = hareket_durum;
+                document.getElementById('pir1').style.color =  hareket;
+            
+                document.getElementById('parlaklik1').innerText = par_durum;
+                document.getElementById('parlaklik1').style.color =  par; 
+            } else if (espId === 'ESP2') {
+                document.getElementById('temperature2').innerText = temperature;
+                document.getElementById('door2').innerText = durum;
+                document.getElementById('door2').style.color =  kapi;
+                document.getElementById('pir2').innerText = hareket_durum;
+                document.getElementById('pir2').style.color =  hareket;
+            
+                document.getElementById('parlaklik2').innerText = par_durum;
+                document.getElementById('parlaklik2').style.color =  par; 
+            } else if (espId === 'ESP3') {
+                document.getElementById('temperature3').innerText = temperature;
+                document.getElementById('door3').innerText = durum;
+                document.getElementById('door3').style.color =  kapi;
+                document.getElementById('pir3').innerText = hareket_durum;
+                document.getElementById('pir3').style.color =  hareket;
+            
+                document.getElementById('parlaklik3').innerText = par_durum;
+                document.getElementById('parlaklik3').style.color =  par; 
+            }else if (espId === 'ESP4') {
+                document.getElementById('temperature4').innerText = temperature;
+                document.getElementById('door4').innerText = durum; 
+                document.getElementById('door4').style.color =  kapi;
+                document.getElementById('pir4').innerText = hareket_durum;
+                document.getElementById('pir4').style.color =  hareket;
+            
+                document.getElementById('parlaklik4').innerText = par_durum;
+                document.getElementById('parlaklik4').style.color =  par; 
+            } else if (espId === 'ESP5') {
+                document.getElementById('temperature5').innerText = temperature;
+                document.getElementById('door5').innerText = durum; 
+                document.getElementById('door5').style.color =  kapi;
+                document.getElementById('pir5').innerText = hareket_durum;
+                document.getElementById('pir5').style.color =  hareket;
+            
+                document.getElementById('parlaklik5').innerText = par_durum;
+                document.getElementById('parlaklik5').style.color =  par; 
+            }
+        });
+	socket.onopen = function() {
+            console.log('WebSocket bağlantısı açıldı');
+            document.getElementById('message').innerText = "Websocket connected";
+            document.getElementById('message').style.color = "#fff";
+        };
+	socket.onclose = function (event){
+        biji = 1;
+        location.reload(true);
+	};
+
+    setInterval(() => {
+  if(biji===1){
+location.reload();
+
+  }
+ 
+}, 1000);
+    </script>
+</body>
+</html>
